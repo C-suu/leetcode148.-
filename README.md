@@ -80,6 +80,18 @@ class Solution:
 3.  `if not head or not head.next: return head`：防御性编程及递归边界条件。若链表为空（`not head`）或长为1（`not head.next`），这本身即是有序状态，直接返回原节点终止递归。
 4.  `slow, fast = head, head.next`：初始化快慢指针。注意此处 `fast` 比常规设在 `head` 提前了一步，这是为了保证在链表长度为偶数时，`slow` 指针刚好停在**左半部分的末尾**，从而方便精准切断。
 5.  `while fast and fast.next:`：启动寻找中点的循环。由于快指针一次跨两步，必须保证它当前所在节点和下一个节点都不是空，否则会触发空指针异常。
+```python
+while fast and fast.next:
+这个不理解，比如链表1 2 3 4，fast是2，fast.next是3，那fast.next.next是4，fast.next.next是空就不影响吗？
+
+`fast.next.next` 是空（`None`）完全不影响，也不会报错。例子 `1 -> 2 -> 3 -> 4` 。
+在 Python 中，把 `None` 赋值给一个变量是完全合法的。
+代码中的赋值语句是：`fast = fast.next.next`
+只要 `fast` 存在，且 `fast.next` 存在，那么 `fast.next.next` 顶多就是一个 `None`。
+这句代码仅仅是**把 `fast` 指针指向了 `None`**，这并没有任何危险。
+真正的危险在于**下一轮循环开始时**。如果 `fast` 已经是 `None` 了，程序再去查问 `fast.next`，就会立刻崩溃。
+这就是 `while fast and fast.next:` 存在的意义：是一个保镖，负责在进入循环体执行 `fast.next.next` 之前，提前拦截所有危险。
+```
 6.  `fast, slow = fast.next.next, slow.next`：快指针跨越2个节点，慢指针跟进1个节点。
 7.  `mid, slow.next = slow.next, None`：这是极其关键的断链操作。此时 `slow` 是左半段的最后一个节点。第一步将 `slow` 后面的节点（即右半段的起点）赋值给暂存变量 `mid`；第二步将 `slow.next` 强行设为 `None`，这就在物理上将一条长链表扯断成了前后独立的两条。
 8.  `left, right = self.sortList(head), self.sortList(mid)`：进入深度递归。将断开后的前半段（头仍是 `head`）和后半段（头是 `mid`）分别丢入 `sortList` 函数中继续执行拆分排序，最终会返回两条分别排好序的链表头节点，分别命名为 `left` 和 `right`。
