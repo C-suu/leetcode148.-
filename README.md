@@ -90,7 +90,8 @@ while fast and fast.next:
 只要 `fast` 存在，且 `fast.next` 存在，那么 `fast.next.next` 顶多就是一个 `None`。
 这句代码仅仅是**把 `fast` 指针指向了 `None`**，这并没有任何危险。
 真正的危险在于**下一轮循环开始时**。如果 `fast` 已经是 `None` 了，程序再去查问 `fast.next`，就会立刻崩溃。
-这就是 `while fast and fast.next:` 存在的意义：是一个保镖，负责在进入循环体执行 `fast.next.next` 之前，提前拦截所有危险。
+这就是 `while fast and fast.next:` 存在的意义：
+是一个保镖，负责在进入循环体执行 `fast.next.next` 之前，提前拦截所有危险。
 ```
 6.  `fast, slow = fast.next.next, slow.next`：快指针跨越2个节点，慢指针跟进1个节点。
 7.  `mid, slow.next = slow.next, None`：这是极其关键的断链操作。此时 `slow` 是左半段的最后一个节点。第一步将 `slow` 后面的节点（即右半段的起点）赋值给暂存变量 `mid`；第二步将 `slow.next` 强行设为 `None`，这就在物理上将一条长链表扯断成了前后独立的两条。
